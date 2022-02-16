@@ -6,10 +6,8 @@ namespace BlenderAutoRenderer
     {
         static void Main()
         {
-            Console.WriteLine("Hello! Welcome to the Blender Auto Renderer\nMade by Caspar Stanley, 2022");
 
             IAutoRenderer autoRenderer = new AutoRendererBlender();
-
             autoRenderer.Start();
 
             //Test command prompt:

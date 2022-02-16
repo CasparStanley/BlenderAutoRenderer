@@ -13,11 +13,16 @@ namespace BlenderAutoRenderer
         string COMMAND { get; set; }
         string PROGRAM_PATH { get; set; }
 
-        // Render Options
+        // Render Options as specified by the program specific Command Line Arguments
         string Opt_Animation { get; set; }
         string Opt_RunInBackground { get; set; }
         string Opt_SceneName { get; set; }
         string Opt_RenderFrame { get; set; }
+        string Opt_FrameStart { get; set; }
+        string Opt_FrameEnd { get; set; }
+        string Opt_FrameJump { get; set; }
+        string Opt_OutputPath { get; set; }
+
 
         // Render Settings
 

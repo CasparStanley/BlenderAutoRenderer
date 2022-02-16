@@ -16,6 +16,10 @@ namespace BlenderAutoRenderer
         public abstract string Opt_RunInBackground { get; set; }
         public abstract string Opt_SceneName { get; set; }
         public abstract string Opt_RenderFrame { get; set; }
+        public abstract string Opt_FrameStart { get; set; }
+        public abstract string Opt_FrameEnd { get; set; }
+        public abstract string Opt_FrameJump { get ; set ; }
+        public abstract string Opt_OutputPath { get ; set ; }
 
         public bool Animation { get; set; } = false;
         public int FrameStart { get; set; } = 1;
@@ -24,6 +28,8 @@ namespace BlenderAutoRenderer
         #region GENERAL METHODS
         public void Start()
         {
+            Write("Hello! Welcome to the Blender Auto Renderer\nMade by Caspar Stanley, 2022");
+
             RUNNING = true;
             string command = "";
 
@@ -33,14 +39,16 @@ namespace BlenderAutoRenderer
             while (RUNNING)
             {
                 AskQuestions();
+                ReviewAnswers();
             }
 
-            Run(command);
+            //Run(command);
         }
 
         public void Question(string q)
         {
-            Console.WriteLine(q);
+            Console.WriteLine();
+            Write(q);
         }
 
         public void Run(string command)
@@ -58,13 +66,24 @@ namespace BlenderAutoRenderer
             // Rendering an animation
             if (Q_Animation())
             {
-
+                Animation = true;
+                Write("You chose to render an animation!");
             }
             // Rendering separate frames
             else
             {
+                Animation = false;
+                Write("You chose to render frames!");
                 Q_SingleOrMutlipleFrames();
             }
+
+            // Done asking questions, time to review!
+        }
+
+        public void ReviewAnswers()
+        {
+            Write("These are your current settings. Please review.");
+
         }
 
         public void ConfirmQuestions()
@@ -82,5 +101,25 @@ namespace BlenderAutoRenderer
 
         public abstract void Q_SingleOrMutlipleFrames();
         #endregion
+
+        public void Write(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(text);
+        }
+        public void Write_Note(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(text);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        public void Write_Warning(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(text);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
     }
 }
