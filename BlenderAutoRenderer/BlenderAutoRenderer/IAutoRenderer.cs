@@ -23,14 +23,14 @@ namespace BlenderAutoRenderer
         string Opt_FrameJump { get; set; }
         string Opt_OutputPath { get; set; }
 
-
-        // Render Settings
-
-
-        // Animation Settings
-        bool Animation { get; set; }
+        // ToDo: Convert this to a class so multiple render-ranges can be set up (multiple scenes for example)
+        // Settings
+        string SceneName { get; set; }
         int FrameStart { get; set; }
         int FrameEnd { get; set; }
+        int FrameJump { get; set; }
+        bool Animation { get; set; }
+        string OutputPath { get; set; }
 
         #region GENERAL METHODS
         void Start();

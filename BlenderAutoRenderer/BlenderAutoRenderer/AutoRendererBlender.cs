@@ -8,6 +8,7 @@ namespace BlenderAutoRenderer
 {
     class AutoRendererBlender : AutoRenderer
     {
+        #region PROPERTIES
         // Render Options as specified by Blender's Command Line Arguments
         public override string Opt_Animation { get; set; }          = " -a "; // Render frames from start to end (inclusive).
         public override string Opt_RunInBackground { get; set; }    = " -b "; // Run in background (often used for UI-less rendering).
@@ -19,8 +20,8 @@ namespace BlenderAutoRenderer
         /// A range of frames can be expressed using .. separator between the first and last frames (inclusive).
         /// </summary>
         public override string Opt_RenderFrame { get; set; }        = " -f "; // Render frame <frame> and save it.
-        public override string Opt_FrameStart { get; set; }     = " -s "; // Set start to frame <frame>, supports +/- for relative frames too.
-        public override string Opt_FrameEnd { get; set; }       = " -e "; // Set end to frame <frame>, supports +/- for relative frames too.
+        public override string Opt_FrameStart { get; set; }         = " -s "; // Set start to frame <frame>, supports +/- for relative frames too.
+        public override string Opt_FrameEnd { get; set; }           = " -e "; // Set end to frame <frame>, supports +/- for relative frames too.
         public override string Opt_FrameJump { get; set; }          = " -j "; // Set number of frames to step forward after each rendered frame.
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace BlenderAutoRenderer
         /// When the filename does not contain #, The suffix #### is added to the filename.
         /// </summary>
         public override string Opt_OutputPath { get; set; }         = " -o "; // Set the render path and file name. 
+        #endregion
 
         #region QUESTIONS
         public override string Q_ProgramExeLocation()

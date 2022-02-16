@@ -24,6 +24,9 @@ namespace BlenderAutoRenderer
         public bool Animation { get; set; } = false;
         public int FrameStart { get; set; } = 1;
         public int FrameEnd { get; set; } = 255;
+        public string SceneName { get; set; } = "";
+        public int FrameJump { get; set; } = 0;
+        public string OutputPath { get; set; } = "";
 
         #region GENERAL METHODS
         public void Start()
