@@ -11,7 +11,7 @@ namespace BlenderAutoRenderer
         // Properties
         bool RUNNING { get; set; }
         string COMMAND { get; set; }
-        string PROGRAM_PATH { get; set; }
+        string ProgramPath { get; set; }
 
         // Render Options as specified by the program specific Command Line Arguments
         string Opt_Animation { get; set; }
@@ -20,6 +20,7 @@ namespace BlenderAutoRenderer
         string Opt_RenderFrame { get; set; }
         string Opt_FrameStart { get; set; }
         string Opt_FrameEnd { get; set; }
+        int[] SingleFramesToRender { get; set; }
         string Opt_FrameJump { get; set; }
         string Opt_OutputPath { get; set; }
 
@@ -47,11 +48,17 @@ namespace BlenderAutoRenderer
         #region QUESTIONS
         string Q_ProgramExeLocation();
 
+        string Q_FileLocation();
+
+        string Q_OutputLocation();
+
         bool Q_Animation();
+
+        void Q_AnimationFrameRange();
 
         void Q_SingleOrMutlipleFrames();
 
-        void Q_AnimationFrameRange();
+        void Q_FrameJump();
         #endregion
     }
 }

@@ -42,6 +42,20 @@ namespace BlenderAutoRenderer
             return Console.ReadLine();
         }
 
+        public override string Q_FileLocation()
+        {
+            Question("Please enter the location of your .blend project file");
+            Write_Note("Note: You can drag and drop the .blend file from your file explorer");
+            return Console.ReadLine();
+        }
+
+        public override string Q_OutputLocation()
+        {
+            Question("Please enter the location you wish to use as the Output location");
+            Write_Note("Note: You can copye and paste the directory from your file explorer (ctrl+v or right click)");
+            return Console.ReadLine();
+        }
+
         public override bool Q_Animation()
         {
             while (true)
@@ -65,20 +79,93 @@ namespace BlenderAutoRenderer
             }
         }
 
-        public override void Q_SingleOrMutlipleFrames()
-        {
-            Question("Do you want to render a single or multiple frames?");
-            throw new NotImplementedException();
-        }
-
         public override void Q_AnimationFrameRange()
         {
-            Question("At what frame do you want your animation to start?");
+            bool frameStartChosen = false;
+            while (!frameStartChosen)
+            {
+                Question("At what frame do you want your animation to start?");
 
+                try
+                {
+                    FrameStart = Convert.ToInt32(Console.ReadLine());
+                    frameStartChosen = true;
+                }
+                catch
+                {
+                    Write_Warning("Looks like that was not a valid number. Try again: ");
+                }
+            }
 
+            bool frameEndChosen = false;
+            while (!frameEndChosen)
+            {
+                Question("At what frame do you want your animation to end?");
 
-            Question("At what frame do you want your animation to end?");
-            throw new NotImplementedException();
+                try
+                {
+                    FrameEnd = Convert.ToInt32(Console.ReadLine());
+                    frameEndChosen = true;
+                }
+                catch
+                {
+                    Write_Warning("Looks like that was not a valid number. Try again: ");
+                }
+            }
+        }
+
+        public override void Q_SingleOrMutlipleFrames()
+        {
+            bool multipleFramesChosen = false;
+            while (!multipleFramesChosen)
+            {
+                Question("What frame(s) do you want to render?");
+                Write_Note("Write the number of the frame you want to render. If multiple, split by a comma");
+                string input;
+                try
+                {
+                    input = Console.ReadLine();
+                    string[] frames = input.Split(',');
+                    List<int> framesChosen = new List<int>();
+                    foreach (var f in frames)
+                    {
+                        framesChosen.Add(Convert.ToInt32(f));
+                    }
+
+                    framesChosen.Sort();
+                    SingleFramesToRender = framesChosen.ToArray();
+
+                    if (framesChosen.Last() > FrameEnd)
+                    {
+                        FrameEnd = framesChosen.Last();
+                    }
+
+                    multipleFramesChosen = true;
+                }
+                catch
+                {
+                    Write_Warning("Looks like that was not a valid number. Try again: ");
+                }
+            }
+        }
+
+        public override void Q_FrameJump()
+        {
+            bool frameJumpChosen = false;
+            while (!frameJumpChosen)
+            {
+                Question("Skip frames at a regular interval?");
+                Write_Note("(Type number, 0 to render normally)");
+                try
+                {
+                    FrameJump = Convert.ToInt32(Console.ReadLine());
+                    frameJumpChosen = true;
+                }
+                catch
+                {
+                    Write_Warning("Looks like that was not a valid number. Try again: ");
+                }
+            }
         }
         #endregion
     }
