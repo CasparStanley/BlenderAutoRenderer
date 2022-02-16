@@ -20,7 +20,7 @@ namespace BlenderAutoRenderer
         string Opt_RenderFrame { get; set; }
         string Opt_FrameStart { get; set; }
         string Opt_FrameEnd { get; set; }
-        int[] SingleFramesToRender { get; set; }
+        string SingleFramesToRender { get; set; }
         string Opt_FrameJump { get; set; }
         string Opt_OutputPath { get; set; }
 
@@ -38,7 +38,9 @@ namespace BlenderAutoRenderer
 
         void AskQuestions();
 
-        void ConfirmQuestions();
+        void ReviewAnswers();
+
+        void CreateCommand();
 
         void Run(string command);
 

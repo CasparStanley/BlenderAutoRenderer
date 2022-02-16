@@ -10,19 +10,19 @@ namespace BlenderAutoRenderer
     {
         #region PROPERTIES
         // Render Options as specified by Blender's Command Line Arguments
-        public override string Opt_Animation { get; set; }          = " -a "; // Render frames from start to end (inclusive).
-        public override string Opt_RunInBackground { get; set; }    = " -b "; // Run in background (often used for UI-less rendering).
-        public override string Opt_SceneName { get; set; }          = " -S "; // Set the active scene <name> for rendering.
+        public override string Opt_Animation { get; set; }          = "-a"; // Render frames from start to end (inclusive).
+        public override string Opt_RunInBackground { get; set; }    = "-b"; // Run in background (often used for UI-less rendering).
+        public override string Opt_SceneName { get; set; }          = "-S"; // Set the active scene <name> for rendering.
 
         /// <summary>
         /// +<frame> start frame relative, -<frame> end frame relative. (-f 10 would render 10th frame, -f -2 would render second last frame)
         /// A comma separated list of frames can also be used (no spaces).
         /// A range of frames can be expressed using .. separator between the first and last frames (inclusive).
         /// </summary>
-        public override string Opt_RenderFrame { get; set; }        = " -f "; // Render frame <frame> and save it.
-        public override string Opt_FrameStart { get; set; }         = " -s "; // Set start to frame <frame>, supports +/- for relative frames too.
-        public override string Opt_FrameEnd { get; set; }           = " -e "; // Set end to frame <frame>, supports +/- for relative frames too.
-        public override string Opt_FrameJump { get; set; }          = " -j "; // Set number of frames to step forward after each rendered frame.
+        public override string Opt_RenderFrame { get; set; }        = "-f"; // Render frame <frame> and save it.
+        public override string Opt_FrameStart { get; set; }         = "-s"; // Set start to frame <frame>, supports +/- for relative frames too.
+        public override string Opt_FrameEnd { get; set; }           = "-e"; // Set end to frame <frame>, supports +/- for relative frames too.
+        public override string Opt_FrameJump { get; set; }          = "-j"; // Set number of frames to step forward after each rendered frame.
 
         /// <summary>
         /// Use // at the start of the path to render relative to the blend-file.
@@ -31,7 +31,7 @@ namespace BlenderAutoRenderer
         /// test-######.png becomes test-000001.png
         /// When the filename does not contain #, The suffix #### is added to the filename.
         /// </summary>
-        public override string Opt_OutputPath { get; set; }         = " -o "; // Set the render path and file name. 
+        public override string Opt_OutputPath { get; set; }         = "-o"; // Set the render path and file name. 
         #endregion
 
         #region QUESTIONS
@@ -52,7 +52,8 @@ namespace BlenderAutoRenderer
         public override string Q_OutputLocation()
         {
             Question("Please enter the location you wish to use as the Output location");
-            Write_Note("Note: You can copye and paste the directory from your file explorer (ctrl+v or right click)");
+            Write_Note("Note: You can copy and paste the directory from your file explorer (ctrl+v or right click)");
+            Write_Note("Leave empty to use the output location set in Blender");
             return Console.ReadLine();
         }
 
@@ -116,31 +117,54 @@ namespace BlenderAutoRenderer
 
         public override void Q_SingleOrMutlipleFrames()
         {
-            bool multipleFramesChosen = false;
-            while (!multipleFramesChosen)
+            bool settingFrames = true;
+            while (settingFrames)
             {
                 Question("What frame(s) do you want to render?");
                 Write_Note("Write the number of the frame you want to render. If multiple, split by a comma");
                 string input;
                 try
                 {
+                    // Beware reader: This is ugly _(._.)_
                     input = Console.ReadLine();
                     string[] frames = input.Split(',');
-                    List<int> framesChosen = new List<int>();
-                    foreach (var f in frames)
+
+                    // Looks like someone chose MORE than one frame! Spicey!
+                    if (frames.Length > 1)
                     {
-                        framesChosen.Add(Convert.ToInt32(f));
+                        List<string> framesChosen = new List<string>();
+                        foreach (var f in frames)
+                        {
+                            framesChosen.Add(f);
+                        }
+
+                        //framesChosen.Sort();
+                        string framesToRender = "";
+
+                        for (int i = 0; i < frames.Length; i++)
+                        {
+                            framesToRender += frames[i];
+
+                            // Add this in between frame numbers, unless it's the last one
+                            if (i + 1 < frames.Length)
+                                framesToRender += ",";
+                        }
+                        SingleFramesToRender = framesToRender;
+
+                        // Set the last frame, if it's higher than what is currently set
+                        int lastFrame = Convert.ToInt32(framesChosen.Last());
+                        if (lastFrame > FrameEnd)
+                        {
+                            FrameEnd = lastFrame;
+                        }
+                    }
+                    // Just a single frame today. Solid choice.
+                    else
+                    {
+                        SingleFramesToRender = frames[0];
                     }
 
-                    framesChosen.Sort();
-                    SingleFramesToRender = framesChosen.ToArray();
-
-                    if (framesChosen.Last() > FrameEnd)
-                    {
-                        FrameEnd = framesChosen.Last();
-                    }
-
-                    multipleFramesChosen = true;
+                    settingFrames = false;
                 }
                 catch
                 {
@@ -166,6 +190,81 @@ namespace BlenderAutoRenderer
                     Write_Warning("Looks like that was not a valid number. Try again: ");
                 }
             }
+        }
+
+        public override void ReviewAnswers()
+        {
+            WriteConsoleTop();
+
+            Write("These are your current settings. Please review.");
+            Write_Note("If you are happy with these settings, press enter");
+            Write_Note("If you would like to change a setting, type the letter in parenthethis");
+            Write_Note("If you would like to start over, type 'Reset'");
+
+            string choice = Console.ReadLine();
+            switch (choice.ToLower())
+            {
+                case "":
+                    Console.WriteLine("Confirmed Settings, Creating command!");
+                    break;
+                case "p":
+                    Console.WriteLine("Editing Blender.exe path");
+                    break;
+                case "f":
+                    Console.WriteLine("Editing file path");
+                    break;
+                case "t":
+                    Console.WriteLine("Editing render type (render/animation)");
+                    break;
+                case "s":
+                    Console.WriteLine("Editing start frame");
+                    break;
+                case "e":
+                    Console.WriteLine("Editing end frame");
+                    break;
+                case "n":
+                    Console.WriteLine("Editing scene name");
+                    break;
+                case "j":
+                    Console.WriteLine("Editing frame jump");
+                    break;
+                case "o":
+                    Console.WriteLine("Editing output path");
+                    break;
+                case "reset":
+                    Console.WriteLine("Resetting settings. Starting over!");
+                    break;
+                default:
+                    break;
+            }
+
+            Console.ReadLine();
+            RUNNING = false;
+        }
+
+        public override void CreateCommand()
+        {
+            Console.WriteLine("Creating command");
+            string cmdOutputPath, cmd2 = "", cmd3 = "", cmd4 = "", cmdEnd;
+
+            cmdOutputPath = $"{Opt_OutputPath} {OutputPath}\\";
+
+            // Animation(-a)/Render(-f) HAS to be the last option in the final command
+            if (Animation) 
+            {
+                cmd2 = $" {Opt_FrameStart} {FrameStart}";
+                cmd3 = $" {Opt_FrameEnd} {FrameEnd}";
+                cmd4 = $" {Opt_FrameJump} {FrameJump}";
+                cmdEnd = Opt_Animation; 
+            }
+            else 
+            {
+                cmdEnd = $"{Opt_RenderFrame} {SingleFramesToRender}";
+            }
+
+            string command = $"{ProgramPath} {Opt_RunInBackground} {FilePath} {cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
+            Console.WriteLine("Command: " + command);
+            COMMAND = command;
         }
         #endregion
     }

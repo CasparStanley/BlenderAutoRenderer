@@ -8,7 +8,7 @@ namespace BlenderAutoRenderer
 {
     public abstract class AutoRenderer : IAutoRenderer
     {
-        public bool RUNNING { get; set; } = false;
+        public bool RUNNING { get; set; } = true;
         public string COMMAND { get; set; } = "";
 
         public abstract string Opt_Animation { get; set; }
@@ -24,7 +24,7 @@ namespace BlenderAutoRenderer
         public bool Animation { get; set; } = false;
         public int FrameStart { get; set; } = 1;
         public int FrameEnd { get; set; } = 255;
-        public int[] SingleFramesToRender { get; set; }
+        public string SingleFramesToRender { get; set; }
         public string SceneName { get; set; } = "Scene (default)";
         public int FrameJump { get; set; } = 0;
         public string FilePath { get; set; } = "";
@@ -46,22 +46,18 @@ namespace BlenderAutoRenderer
         {
             WriteConsoleTop();
 
-            RUNNING = true;
-            string command = "";
-
-            // Run in background as default
-            command += Opt_RunInBackground;
-
             while (RUNNING)
             {
                 AskQuestions();
                 ReviewAnswers();
             }
 
-            //Run(command);
+            Console.WriteLine("Eyo what");
+            CreateCommand();
+            Run(COMMAND);
         }
 
-        private void WriteConsoleTop()
+        public void WriteConsoleTop()
         {
             Console.Clear();
             Write("Hello! Welcome to the Blender Auto Renderer\nMade by Caspar Stanley, 2022");
@@ -108,65 +104,17 @@ namespace BlenderAutoRenderer
                 Animation = false;
 
                 Q_SingleOrMutlipleFrames();
+                Console.WriteLine("Frames confirmed: " + SingleFramesToRender);
+                System.Threading.Thread.Sleep(1000);
             }
 
             // Done asking questions, time to review!
         }
 
 
-        public void ReviewAnswers()
-        {
-            WriteConsoleTop();
+        public abstract void ReviewAnswers();
 
-            Write("These are your current settings. Please review.");
-            Write_Note("If you are happy with these settings, press enter");
-            Write_Note("If you would like to change a setting, type the letter in parenthethis");
-            Write_Note("If you would like to start over, type 'Reset'");
-
-            string choice = Console.ReadLine();
-            switch(choice.ToLower())
-            {
-                case "":
-                    Console.WriteLine("Confirmed Settings");
-                    break;
-                case "p":
-                    Console.WriteLine("Editing Blender.exe path");
-                    break;
-                case "f":
-                    Console.WriteLine("Editing file path");
-                    break;
-                case "t":
-                    Console.WriteLine("Editing render type (render/animation)");
-                    break;
-                case "s":
-                    Console.WriteLine("Editing start frame");
-                    break;
-                case "e":
-                    Console.WriteLine("Editing end frame");
-                    break;
-                case "n":
-                    Console.WriteLine("Editing scene name");
-                    break;
-                case "j":
-                    Console.WriteLine("Editing frame jump");
-                    break;
-                case "o":
-                    Console.WriteLine("Editing output path");
-                    break;
-                case "reset":
-                    Console.WriteLine("Resetting settings. Starting over!");
-                    break;
-                default:
-                    break;
-            }
-
-            Console.ReadLine();
-        }
-
-        public void ConfirmQuestions()
-        {
-
-        }
+        public abstract void CreateCommand();
         #endregion
 
         #region QUESTIONS
