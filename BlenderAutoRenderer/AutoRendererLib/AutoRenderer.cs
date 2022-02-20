@@ -16,6 +16,7 @@ namespace BlenderAutoRenderer
 
         public bool RUNNING { get; set; } = true;
         public string COMMAND { get; set; } = "";
+        public bool BATCH { get; set; } = false;
 
         public abstract string Opt_Animation { get; set; }
         public abstract string Opt_RunInBackground { get; set; }
@@ -59,7 +60,6 @@ namespace BlenderAutoRenderer
                 ReviewAnswers();
             }
 
-            Console.WriteLine("Eyo what");
             CreateCommand();
             //Run(COMMAND);
         }

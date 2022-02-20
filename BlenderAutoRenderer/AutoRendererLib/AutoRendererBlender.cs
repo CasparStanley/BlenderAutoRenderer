@@ -238,18 +238,16 @@ namespace BlenderAutoRenderer
                     break;
             }
 
-            Console.ReadLine();
             RUNNING = false;
         }
 
         public override void CreateCommand()
         {
-            Console.WriteLine("Creating command");
             string cmdOutputPath, cmd2 = "", cmd3 = "", cmd4 = "", cmdEnd;
 
             if (!String.IsNullOrEmpty(OutputPath))
             {
-                cmdOutputPath = $" {Opt_OutputPath} {OutputPath}\\";
+                cmdOutputPath = $" {Opt_OutputPath} {OutputPath}";
             }
             else
             {
@@ -269,7 +267,16 @@ namespace BlenderAutoRenderer
                 cmdEnd = $"{Opt_RenderFrame} {SingleFramesToRender}";
             }
 
-            string command = $"{ProgramPath} {Opt_RunInBackground} {FilePath}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
+            string command;
+            if (!BATCH)
+            {
+                command = $"{ProgramPath} {Opt_RunInBackground} {FilePath}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
+            }
+            else
+            {
+                // This way we can add the Program path only on the first command in the list.
+                command = $"{FilePath}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
+            }
             Console.WriteLine("Command: " + command);
             COMMAND = command;
         }

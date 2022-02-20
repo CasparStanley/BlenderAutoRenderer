@@ -12,6 +12,7 @@ namespace BlenderAutoRenderer
         bool RUNNING { get; set; }
         string COMMAND { get; set; }
         string ProgramPath { get; set; }
+        bool BATCH { get; set; }
 
         // Render Options as specified by the program specific Command Line Arguments
         string Opt_Animation { get; set; }

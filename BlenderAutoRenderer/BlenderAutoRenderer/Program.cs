@@ -7,7 +7,8 @@ namespace BlenderAutoRenderer
     {
         static void Main()
         {
-            RunSingle();
+            //RunSingle();
+            RunMultiple();
 
             //Test command prompt:
             // autoRenderer.Run("cd");
@@ -33,7 +34,13 @@ namespace BlenderAutoRenderer
 
                 Console.WriteLine("Hi. Let's create an auto renderer or two for you!");
                 System.Threading.Thread.Sleep(2000);
+
                 IAutoRenderer autoRenderer = new AutoRendererBlender();
+
+                // Make sure to set all of them to BATCH rendering, so their command is generated correctly
+                autoRenderer.BATCH = true;
+
+                // Start the setup of this Auto Renderer
                 autoRenderer.Start();
                 autoRenderers.Add(autoRenderer);
 
@@ -57,23 +64,31 @@ namespace BlenderAutoRenderer
                 }
             }
 
+            IAutoRenderer autoRendererForRunning = new AutoRendererBlender();
+            string command = "";
+            int i = 0;
             foreach (IAutoRenderer aR in autoRenderers)
             {
-                bool runThisAR = true;
-                while (runThisAR)
+                // Add the program location to the very start of the command
+                if (i == 0)
                 {
-                    // This doesn't work, as GetCurrentProcess gets the console and associates the process with the console that is obviously open...
-                    if (System.Diagnostics.Process.GetCurrentProcess() == null)
-                    {
-                        aR.Run(aR.COMMAND);
-                        runThisAR = false;
-                    }
-                    else
-                    {
-                        System.Threading.Thread.Sleep(2000);
-                    }
+                    command += aR.ProgramPath + " " + aR.Opt_RunInBackground + " ";
                 }
+
+                if (i < autoRenderers.Count)
+                {
+                    command += aR.COMMAND + " ";
+                } else
+                {
+                    command += aR.COMMAND;
+                }
+
+                i++;
             }
+
+            Console.WriteLine("Command for batch rendering: " + command);
+            Console.ReadLine();
+            autoRendererForRunning.Run(command);
         }
     }
 }
