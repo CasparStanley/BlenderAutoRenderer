@@ -1,0 +1,81 @@
+@font-face {
+    font-family: dejavu;
+    src: url(/assets/dejavu-sans/DejaVuSans-ExtraLight.ttf);
+}
+
+body {
+    background-color:rgb(35, 35, 35);
+    color: #fff;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: lighter;
+}
+
+.jumbotron {
+    background-color:rgb(20, 20, 20) !important;
+}
+
+.inner {
+    background-color:rgb(60, 60, 60) !important;
+}
+
+
+.rounded {
+    border-radius: 10px !important;
+}
+
+.rounded-more {
+    border-radius: 15px !important;
+}
+
+.rounded-less {
+    border-radius: 3px !important;
+    outline: rgb(80, 80, 80) solid 2px;
+}
+
+.table {
+    background-color:rgb(20, 20, 20);
+    color: white
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot-green {
+    background-color: rgb(0, 196, 81);
+}
+
+.dot-blue {
+    background-color: rgb(42, 119, 233);
+}
+
+.dot-red {
+    background-color: rgb(238, 62, 39);
+}
+
+.btn-success {
+    background-color:#00B189 !important;
+}
+
+.form-check-input {
+    background-color:#00B189 !important;
+}
+
+input[type="text"], textarea {
+
+    background-color : rgb(20, 20, 20);
+    caret-color: rgb(200, 200, 200);
+    color:rgb(200, 200, 200)
+}
+
+.sc-green {
+    background-color : #00B189 !important;
+}
+
+small {
+    color:rgb(180, 180, 180)
+}

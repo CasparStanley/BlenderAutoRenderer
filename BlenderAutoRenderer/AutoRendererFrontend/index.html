@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Get Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- Include Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <!-- Include Font Awesome-->
+    <link href="./assets/fontawesome/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
+    <!-- Set Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blender Auto Renderer</title>
+    <!-- Import Styles -->
+    <link rel="stylesheet" href=".\assets\styles.css" />
+    <!-- Import Vue.js -->
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
+    <div class="container" div id="app">
+        <div class="row">
+            <div class="jumbotron rounded-more shadow p-1 my-5 col-12">
+            <div class="jumbotron sc-green rounded-more shadow p-1 col-12">
+            <div class="jumbotron inner rounded p-5 col-12">
+                <div class="col-12 col-xl-4 pb-5">
+                    <h2><i class="fa-solid fa-blender"></i> Blender Auto Renderer</h2>
+                </div>
+                <div class="col-12 col-xl-12 pb-5">
+                    <div class="d-flex my-2">
+                        <div class="col-12">
+                            <label for="blender-path" class="my-2 mx-2">Blender.exe Path</label>
+                            <input class="rounded-less w-100 d-flex justify-content-end" required id="blender-path" type="text" placeholder="/blender/blender.exe" class="form-control" />
+                        </div>
+                    </div>
+
+                    <br>
+                    <hr class="style1">
+                    
+                    <div class="my-2">
+                        <div class="d-flex my-2"><h4>Auto Renderer&nbsp;</h4><h4>{{AutoRenderers.length}}</h4></div>
+
+                        <div class="d-flex my-2">
+                            <div class="col-12">
+                                <label for="blend-file" class="my-2 mx-2">File.blend Path</label>
+                                <input class="rounded-less w-100 d-flex justify-content-end" required id="blend-file" type="text" placeholder="/your-projects/File.blend" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex my-2">
+                            <div class="col-12">
+                                <label for="blend-file" class="my-2 mx-2">Output Path -&nbsp;<small>Leave empty to use the output path set in the Blender file</small></label>
+                                <input class="rounded-less w-100 d-flex justify-content-end" required id="blend-file" type="text" placeholder="/your-output/render_####" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex my-4">
+                            <div class="form-check form-switch">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">Render/Animation</label>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="style1">
+                <br>
+
+                <div class="col-12 col-xl-12 pb-5">
+                    <h4>Get Specific Cooler</h4>
+                    <div class="d-flex my-2">
+                        <div class="col-2">
+                            <label for="getCoolerId" class="my-2">Cooler Id</label>
+                            <input required id="getCoolerId" type="number" class="form-control" v-model.number="idToGetBy" />
+                        </div>
+                        
+                        <div class="mx-2 w-100 d-flex justify-content-end">
+                            <button v-on:click="get(idToGetBy)" class="btn btn-success mt-auto">Hent</button>
+                        </div>
+                    </div>
+
+                    <table class="table table-borderless rounded-less">
+                        <thead>
+                          <tr>
+                            <th scope="col">Cooler Id</th>
+                            <th scope="col">Capacity</th>
+                            <th scope="col">Bottles in Storage</th>
+                            <th scope="col">Temperature (Celsius)</th>
+                            <th scope="col">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody v-if="wineCooler">
+                          <tr>
+                            <th scope="row">{{wineCooler.coolerId}}</th>
+                            <td>{{wineCooler.capacityOfBottles}}</td>
+                            <td>{{wineCooler.bottlesInStorage}}</td>
+                            <td>{{wineCooler.temp}}</td>
+                            <td class="d-flex justify-content-between">
+                                {{wineCooler.status}}
+                                <span v-if="wineCooler.status == null" class="dot my-auto"></span>
+                                <span v-if="wineCooler.status == 'FULL'" class="dot dot-red my-auto"></span>
+                                <span v-if="wineCooler.status == 'EMPTY'" class="dot dot-blue my-auto"></span>
+                                <span v-if="wineCooler.status == 'NOT FULL'" class="dot dot-green my-auto"></span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                </div>
+
+                <hr class="style1">
+                <br>
+
+                <div class="col-12 col-xl-12 pb-5">
+                    <h4>Make New Cooler</h4>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label for="newCoolerCap" class="my-2">Cooler Capacity</label>
+                            <input required id="newCoolerCap" type="number" class="form-control" v-model.number="addData.capacityOfBottles" />
+                        </div>
+                        
+                        <div class="mx-3 col-2">
+                            <label for="newCoolerBottles" class="my-2">Bottles in Storage</label>
+                            <input required id="newCoolerBottles" type="number" class="form-control" v-model.number="addData.bottlesInStorage" />
+                        </div>
+                        
+                        <div class="col-2">
+                            <label for="newCoolerTemp" class="my-2">Temperature (Celsius)</label>
+                            <input required id="newCoolerTemp" type="number" class="form-control" v-model.number="addData.temp" />
+                        </div>
+                        
+                        <div class="mx-2 w-100 d-flex justify-content-end">
+                            <button v-on:click="add()" class="btn btn-success mt-auto">Opret</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="style1">
+                <br>
+
+                <div class="col-12 col-xl-12 pb-5">
+                    <h4>Add Wine to a Cooler</h4>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label for="getCoolerIdToAddWine" class="my-2">Cooler Id</label>
+                            <input required id="getCoolerIdToAddWine" type="number" class="form-control" v-model.number="coolerToGet" />
+                        </div>
+                        
+                        <div class="mx-2 w-100 d-flex justify-content-end">
+                            <button v-on:click="addWine(coolerToGet)" class="btn btn-success mt-auto">Tilføj</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            </div>
+
+            <!-- Import App -->
+            <script src="./main.js"></script>
+            
+            <!-- Import Components -->
+            <!-- <script src="./components/InputDisplay.js"></script> -->
+
+            <!-- Mount App -->
+            <!-- <script>
+                const mountedApp = app.mount('#app')
+            </script> -->
+
+            <!-- JS for Axios -->
+            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+            
+            <!-- JS for Bootstrap -->
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        </div>
+    </div>
+</body>
+</html>
