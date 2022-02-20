@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlenderAutoRenderer
 {
-    class AutoRendererBlender : AutoRenderer
+    public class AutoRendererBlender : AutoRenderer
     {
         #region PROPERTIES
         // Render Options as specified by Blender's Command Line Arguments
@@ -247,7 +247,14 @@ namespace BlenderAutoRenderer
             Console.WriteLine("Creating command");
             string cmdOutputPath, cmd2 = "", cmd3 = "", cmd4 = "", cmdEnd;
 
-            cmdOutputPath = $"{Opt_OutputPath} {OutputPath}\\";
+            if (!String.IsNullOrEmpty(OutputPath))
+            {
+                cmdOutputPath = $" {Opt_OutputPath} {OutputPath}\\";
+            }
+            else
+            {
+                cmdOutputPath = "";
+            }
 
             // Animation(-a)/Render(-f) HAS to be the last option in the final command
             if (Animation) 
@@ -262,7 +269,7 @@ namespace BlenderAutoRenderer
                 cmdEnd = $"{Opt_RenderFrame} {SingleFramesToRender}";
             }
 
-            string command = $"{ProgramPath} {Opt_RunInBackground} {FilePath} {cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
+            string command = $"{ProgramPath} {Opt_RunInBackground} {FilePath}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
             Console.WriteLine("Command: " + command);
             COMMAND = command;
         }

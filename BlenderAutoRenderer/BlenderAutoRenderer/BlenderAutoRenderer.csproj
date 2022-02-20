@@ -5,4 +5,14 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AutoRendererLib\AutoRendererLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoRendererLib">
+      <HintPath>..\AutoRendererLib\bin\Debug\net5.0\AutoRendererLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

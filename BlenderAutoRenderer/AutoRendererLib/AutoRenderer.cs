@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+
 
 namespace BlenderAutoRenderer
 {
     public abstract class AutoRenderer : IAutoRenderer
     {
+        public Settings settings;
+        public bool loadedSettings = false;
+
         public bool RUNNING { get; set; } = true;
         public string COMMAND { get; set; } = "";
 
@@ -45,6 +51,7 @@ namespace BlenderAutoRenderer
         public void Start()
         {
             WriteConsoleTop();
+            LoadSettings();
 
             while (RUNNING)
             {
@@ -54,7 +61,29 @@ namespace BlenderAutoRenderer
 
             Console.WriteLine("Eyo what");
             CreateCommand();
-            Run(COMMAND);
+            //Run(COMMAND);
+        }
+
+        public void LoadSettings()
+        {
+            try
+            {
+                string jsonString = File.ReadAllText("settings.json");
+                settings = JsonSerializer.Deserialize<Settings>(jsonString);
+                loadedSettings = true;
+            }
+            catch
+            {
+                settings = new Settings();
+                SaveSettings();
+                loadedSettings = false;
+            }
+        }
+
+        public void SaveSettings()
+        {
+            string jsonString = JsonSerializer.Serialize(settings);
+            File.WriteAllText(Environment.CurrentDirectory + "\\settings.json", jsonString);
         }
 
         public void WriteConsoleTop()
@@ -83,8 +112,16 @@ namespace BlenderAutoRenderer
 
         public void AskQuestions()
         {
-            // ToDo: make this save for later use
-            ProgramPath = Q_ProgramExeLocation();
+            if (loadedSettings)
+            {
+                ProgramPath = settings.ProgramLocation;
+            }
+            else
+            {
+                ProgramPath = settings.ProgramLocation = Q_ProgramExeLocation();
+                SaveSettings();
+            }
+
             // ToDo: Make these into classes/loops so you can render from different files and to different paths
             FilePath = Q_FileLocation();
             OutputPath = Q_OutputLocation();
