@@ -53,6 +53,8 @@ namespace BlenderAutoRenderer
 
         string Q_FileLocation();
 
+        string Q_Scene();
+
         string Q_OutputLocation();
 
         bool Q_Animation();

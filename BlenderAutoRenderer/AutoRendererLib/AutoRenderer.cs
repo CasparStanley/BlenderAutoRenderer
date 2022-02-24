@@ -32,7 +32,7 @@ namespace BlenderAutoRenderer
         public int FrameStart { get; set; } = 1;
         public int FrameEnd { get; set; } = 255;
         public string SingleFramesToRender { get; set; }
-        public string SceneName { get; set; } = "Scene (default)";
+        public string SceneName { get; set; } = "Scene";
         public int FrameJump { get; set; } = 0;
         public string FilePath { get; set; } = "";
         public string OutputPath { get; set; } = "";
@@ -124,6 +124,7 @@ namespace BlenderAutoRenderer
 
             // ToDo: Make these into classes/loops so you can render from different files and to different paths
             FilePath = Q_FileLocation();
+            SceneName = Q_Scene();
             OutputPath = Q_OutputLocation();
 
 
@@ -162,6 +163,8 @@ namespace BlenderAutoRenderer
         public abstract string Q_ProgramExeLocation();
 
         public abstract string Q_FileLocation();
+
+        public abstract string Q_Scene();
 
         public abstract string Q_OutputLocation();
 
@@ -211,8 +214,8 @@ namespace BlenderAutoRenderer
             if (FrameStart != 1) { startChoice = FrameStart; }
             if (FrameEnd != 250) { endChoice = FrameEnd; }
 
-            if (SceneName != "Scene (default)") { sceneName = SceneName; }
-            else { sceneName = "Scene (default)"; }
+            if (SceneName != "Scene") { sceneName = SceneName; }
+            else { sceneName = "Scene"; }
 
             if (FrameJump != 0) { frameJump = FrameJump; }
 

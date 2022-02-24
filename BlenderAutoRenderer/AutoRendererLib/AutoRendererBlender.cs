@@ -42,6 +42,13 @@ namespace BlenderAutoRenderer
             return Console.ReadLine();
         }
 
+        public override string Q_Scene()
+        {
+            Question("Please enter the name of the scene you would like to render from");
+            Write_Note("If you simply want to render the current scene in your Blender file, just press Enter");
+            return Console.ReadLine();
+        }
+
         public override string Q_FileLocation()
         {
             Question("Please enter the location of your .blend project file");
@@ -204,17 +211,22 @@ namespace BlenderAutoRenderer
             string choice = Console.ReadLine();
             switch (choice.ToLower())
             {
+                // ToDo: Change settings
                 case "":
                     Console.WriteLine("Confirmed Settings, Creating command!");
                     break;
                 case "p":
                     Console.WriteLine("Editing Blender.exe path");
+                    ProgramPath = Q_ProgramExeLocation();
                     break;
                 case "f":
                     Console.WriteLine("Editing file path");
+                    FilePath = Q_FileLocation();
                     break;
                 case "t":
                     Console.WriteLine("Editing render type (render/animation)");
+                    Animation = Q_Animation();
+                    // ToDo: This one requires you to restart the flow of frames and such??
                     break;
                 case "s":
                     Console.WriteLine("Editing start frame");
@@ -224,6 +236,7 @@ namespace BlenderAutoRenderer
                     break;
                 case "n":
                     Console.WriteLine("Editing scene name");
+                    SceneName = Q_Scene();
                     break;
                 case "j":
                     Console.WriteLine("Editing frame jump");
@@ -243,7 +256,7 @@ namespace BlenderAutoRenderer
 
         public override void CreateCommand()
         {
-            string cmdOutputPath, cmd2 = "", cmd3 = "", cmd4 = "", cmdEnd;
+            string cmdOutputPath, cmdScene = "", cmd2 = "", cmd3 = "", cmd4 = "", cmdEnd;
 
             if (!String.IsNullOrEmpty(OutputPath))
             {
@@ -253,6 +266,8 @@ namespace BlenderAutoRenderer
             {
                 cmdOutputPath = "";
             }
+
+            cmdScene = $" {Opt_SceneName} \"{SceneName}\"";
 
             // Animation(-a)/Render(-f) HAS to be the last option in the final command
             if (Animation) 
@@ -270,12 +285,12 @@ namespace BlenderAutoRenderer
             string command;
             if (!BATCH)
             {
-                command = $"{ProgramPath} {Opt_RunInBackground} {FilePath}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
+                command = $"{ProgramPath} {Opt_RunInBackground} {FilePath}{cmdScene}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
             }
             else
             {
                 // This way we can add the Program path only on the first command in the list.
-                command = $"{FilePath}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
+                command = $"{FilePath}{cmdScene}{cmdOutputPath}{cmd2}{cmd3}{cmd4} {cmdEnd}";
             }
             Console.WriteLine("Command: " + command);
             COMMAND = command;
